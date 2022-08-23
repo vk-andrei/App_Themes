@@ -1,20 +1,29 @@
 package com.example.app_themes;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class ActivityOne extends AppCompatActivity implements View.OnClickListener {
+
+    SharedPreferences sharedPref;
+
+    private static final String NAME_SHARED_PREF_FILE = "NAME_SHARED_PREF_FILE";
+    private static final String KEY_THEME = "KEY_THEME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         /** ТЕМУ применяем ДО setContentView **/
-        setTheme(MyApp.currentTheme);
+        //setTheme(MyApp.currentTheme);
+        setTheme(getAppTheme());
         /**************************************/
+
         setContentView(R.layout.activity_main);
 
         (findViewById(R.id.rBtn_Green)).setOnClickListener(this);
@@ -34,19 +43,42 @@ public class ActivityOne extends AppCompatActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rBtn_Green:
-                MyApp.currentTheme = R.style.myThemeGreen;
+                //MyApp.currentTheme = R.style.myThemeGreen;
+                setAppTheme(R.style.myThemeGreen);
                 break;
             case R.id.rBtn_Blue:
-                MyApp.currentTheme = R.style.myThemeBlue;
+                //MyApp.currentTheme = R.style.myThemeBlue;
+                setAppTheme(R.style.myThemeBlue);
                 break;
             case R.id.rBtn_Yellow:
-                MyApp.currentTheme = R.style.myThemeYellow;
+                //MyApp.currentTheme = R.style.myThemeYellow;
+                setAppTheme(R.style.myThemeYellow);
                 break;
             case R.id.rBtn_Red:
-                MyApp.currentTheme = R.style.myThemeRed;
+                //MyApp.currentTheme = R.style.myThemeRed;
+                setAppTheme(R.style.myThemeRed);
                 break;
         }
         recreate();
+    }
 
+    /**
+     * Устанавливаем и сохраняем тему
+     **/
+    @SuppressLint("CommitPrefEdits")
+    protected void setAppTheme(int themeCode) {
+        sharedPref = getSharedPreferences(NAME_SHARED_PREF_FILE, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(KEY_THEME, themeCode).apply();
+    }
+
+    /**
+     * Получаем тему из сохраненных настроек (в Shared Pref)
+     **/
+    protected int getAppTheme() {
+        sharedPref = getSharedPreferences(NAME_SHARED_PREF_FILE, MODE_PRIVATE);
+        return sharedPref.getInt(KEY_THEME, R.style.myThemeDefault);
     }
 }
+
+
